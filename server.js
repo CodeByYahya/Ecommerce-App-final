@@ -1,12 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import path from "path";
+import cors from "cors";
+
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-import cors from "cors";
-import path from "path";
 
 // Configure env
 dotenv.config();
@@ -25,17 +26,18 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-// Serve static files
-app.use(express.static(path.resolve(__dirname, "./client/dist")));
+// Serve static files from client/dist
+const staticPath = path.join(__dirname, "client", "dist");
+app.use(express.static(staticPath));
 
-// Routes
+// API Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 
 // Catch-all route for serving the index.html
 app.use("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "./client/dist/index.html"));
+  res.sendFile(path.join(staticPath, "index.html"));
 });
 
 // Error handling middleware
