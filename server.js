@@ -6,34 +6,45 @@ import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cors from "cors";
-//configure env
+import path from "path";
+
+// Configure env
 dotenv.config();
 
-//database config
+// Database config
 connectDB();
 
-//rest object
+// Create Express app
 const app = express();
-//PORT
+
+// Port
 const PORT = process.env.PORT || 8080;
 
-//middelwares
+// Middlewares
 app.use(cors());
-app.use(express.json());
 app.use(morgan("dev"));
+app.use(express.json());
 
-//routes
+// Serve static files
+app.use(express.static(path.resolve(__dirname, "./client/dist")));
+
+// Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 
-//rest api
-app.get("/", (req, res) => {
-  res.send({
-    message: "Welcome to ecommerce app",
-  });
+// Catch-all route for serving the index.html
+app.use("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "./client/dist/index.html"));
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
+});
+
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Example app listening on ${process.env.DEV_MODE} port ${PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
 });
