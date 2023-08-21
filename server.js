@@ -1,13 +1,18 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import path from "path";
-import cors from "cors";
-
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import cors from "cors";
+import { fileURLToPath } from "url"; // Import this
+import { dirname, join, resolve } from "path"; // Import these
+
+// Get the current module's file URL
+const __filename = fileURLToPath(import.meta.url);
+// Get the directory name of the current module
+const __dirname = dirname(__filename);
 
 // Configure env
 dotenv.config();
@@ -26,18 +31,17 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-// Serve static files from client/dist
-const staticPath = path.join(__dirname, "client", "dist");
-app.use(express.static(staticPath));
+// Serve static files
+app.use(express.static(resolve(__dirname, "client", "dist")));
 
-// API Routes
+// Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 
 // Catch-all route for serving the index.html
 app.use("*", (req, res) => {
-  res.sendFile(path.join(staticPath, "index.html"));
+  res.sendFile(resolve(__dirname, "client", "dist", "index.html"));
 });
 
 // Error handling middleware
