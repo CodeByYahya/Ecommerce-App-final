@@ -36,3 +36,19 @@
 .category .card-img-top {
   height: 300px !important;
 }
+.cat-btn {
+  background: #ff6767;
+  width: 250px;
+  padding: 30px 0;
+  font-size: 20px;
+}
+.cat-btn:hover {
+  background: #cc5454;
+}
+@media screen and (max-width: 285px) {
+  .cat-btn {
+    background: #ff6767;
+    width: 250px;
+    padding: 20px 0;
+  }
+}

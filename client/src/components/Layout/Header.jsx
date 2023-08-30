@@ -4,6 +4,7 @@ import { useAuth } from "../../context/auth";
 import { FaShoppingCart } from "react-icons/fa";
 import SearchInput from "../Form/SearchInput";
 import useCategory from "../../hooks/useCategroy";
+import axios from "axios";
 import { Badge } from "antd";
 import { useCart } from "../../context/cart";
 
@@ -20,6 +21,21 @@ function Header() {
     localStorage.removeItem("auth");
     toast.success("Logout Successfully");
   };
+  const handleRoleUpdate = async () => {
+    try {
+      const response = await axios.post(
+        "https://ecommerce-website-t7lu43q0c-codewithkainat.vercel.app/api/updateUserRole",
+        {
+          userId: user._id,
+        }
+      );
+      if (response.data.success) {
+        setRoleUpdated(true);
+      }
+    } catch (error) {
+      console.error("Error updating role:", error);
+    }
+  };
   return (
     <nav className="navbar pe-3 navbar-expand-lg navbar-light bg-light">
       <button
@@ -34,8 +50,8 @@ function Header() {
         <span className="navbar-toggler-icon" />
       </button>
       <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-        <Link to="/" className="navbar-brand ms-3">
-          <FaShoppingCart /> Ecommerce App
+        <Link to="/" className="navbar-brand ">
+          <FaShoppingCart /> Kainsfashion
         </Link>
         <ul className="navbar-nav ms-auto mt-2 mt-lg-0">
           <SearchInput />
@@ -93,8 +109,10 @@ function Header() {
                 >
                   {auth?.user?.name}
                 </NavLink>
+
                 <ul className="dropdown-menu">
                   <li>
+                    {/*roll 1 redirect admin else user */}
                     <NavLink
                       to={`/dashboard/${
                         auth?.user?.role === 1 ? "admin" : "user"

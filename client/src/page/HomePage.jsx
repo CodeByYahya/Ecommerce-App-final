@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Checkbox, Radio } from "antd";
-// import { useCart } from "../context/cart";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Layout from "./../components/Layout/Layout";
-import { Prices } from "./../components/Price";
 import { useCart } from "../context/cart";
 import "../styles/Homepage.css";
 
@@ -83,79 +80,29 @@ const HomePage = () => {
     }
   };
 
-  // filter by cat
-  const handleFilter = (value, id) => {
-    let all = [...checked];
-    if (value) {
-      all.push(id);
-    } else {
-      all = all.filter((c) => c !== id);
-    }
-    setChecked(all);
-  };
   useEffect(() => {
     if (!checked.length || !radio.length) getAllProducts();
   }, [checked.length, radio.length]);
 
-  useEffect(() => {
-    if (checked.length || radio.length) filterProduct();
-  }, [checked, radio]);
-
-  //get filterd product
-  const filterProduct = async () => {
-    try {
-      const { data } = await axios.post(
-        "https://ecommerce-website-t7lu43q0c-codewithkainat.vercel.app/api/v1/product/product-filters",
-        {
-          checked,
-          radio,
-        }
-      );
-      setProducts(data?.products);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <Layout>
-      <div className="container-fluid row mt-3 home-page">
-        <div className="col-md-3 filters">
-          <h4 className="text-center">Filter By Category</h4>
-          <div className="d-flex  flex-column">
-            {categories?.map((c) => (
-              <Checkbox
-                key={c._id}
-                onChange={(e) => handleFilter(e.target.checked, c._id)}
-              >
-                {c.name}
-              </Checkbox>
-            ))}
-          </div>
-          {/* price filter */}
-          <h4 className="text-center mt-4">Filter By Price</h4>
-          <div className="d-flex flex-column">
-            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-              {Prices?.map((p, index) => (
-                <div key={p.name}>
-                  <Radio value={p.array}>{p.name}</Radio>
-                </div>
-              ))}
-            </Radio.Group>
-          </div>
-          <div className="d-flex flex-column">
-            <button
-              className="btn btn-danger"
-              onClick={() => window.location.reload()}
+      <div className="w-100">
+        <img
+          className="banner"
+          src="https://img.freepik.com/premium-photo/beautiful-asian-woman-carrying-colorful-bags-shopping-online-with-mobile-phone_8087-3877.jpg?w=740"
+          alt=""
+        />
+      </div>
+      <div className="container-fluid  home-page">
+        <h1 className="text-center w-100">All Products</h1>
+
+        <div className="d-flex justify-content-center flex-wrap ">
+          {products?.map((p) => (
+            <div
+              key={p._id}
+              className="d-flex justify-content-center flex-wrap"
             >
-              RESET FILTERS
-            </button>
-          </div>
-        </div>
-        <div className="col-md-9 ">
-          <h1 className="text-center">All Products</h1>
-          <div className="d-flex justify-content-center flex-wrap">
-            {products?.map((p) => (
-              <div className="card m-2" key={p._id}>
+              <div className="card m-2">
                 <img
                   src={`https://ecommerce-website-t7lu43q0c-codewithkainat.vercel.app/api/v1/product/product-photo/${p._id}`}
                   className="card-img-top"
@@ -172,7 +119,7 @@ const HomePage = () => {
                     </h5>
                   </div>
                   <p className="card-text ">
-                    {p.description.substring(0, 60)}...
+                    {p.description.substring(0, 20)}...
                   </p>
                   <div className="card-name-price">
                     <button
@@ -197,21 +144,21 @@ const HomePage = () => {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="m-2 p-3">
-            {products && products.length < total && (
-              <button
-                className="btn loadmore"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1);
-                }}
-              >
-                {loading ? "Loading ..." : <>Loadmore</>}
-              </button>
-            )}
-          </div>
+            </div>
+          ))}
+        </div>
+        <div className="m-2 p-3 w-100">
+          {products && products.length < total && (
+            <button
+              className="btn loadmore"
+              onClick={(e) => {
+                e.preventDefault();
+                setPage(page + 1);
+              }}
+            >
+              {loading ? "Loading ..." : <>Loadmore</>}
+            </button>
+          )}
         </div>
       </div>
     </Layout>
